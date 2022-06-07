@@ -6,15 +6,20 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * Native TCP client implementation
+ *  
+ */
 public class NativeTcpClient implements Client {
     private Socket socket;
     private ClientRequestHandler<String> requestHandler;
-	
-    public NativeTcpClient(Socket socket) {
-		this(socket,null);
+	private ClientInfo clientInfo;
+    public NativeTcpClient(String id, Socket socket) {
+		this(id,socket,null);
 	}
-    
-    public NativeTcpClient(Socket socket, ClientRequestHandler<String> handler) {
+   
+    public NativeTcpClient(String id, Socket socket, ClientRequestHandler<String> handler) {
+    	this.clientInfo = new ClientInfo(id);
 		this.socket = socket;
 		this.requestHandler = handler;
 	}
@@ -38,7 +43,7 @@ public class NativeTcpClient implements Client {
 		}
 		finally {
 			if(socket.isClosed()) {
-				System.out.println("Client connection socket is closed ..");
+				System.out.println("Client connection socket is closed .."+clientInfo);
 			}
 		}	
 	}
@@ -50,7 +55,7 @@ public class NativeTcpClient implements Client {
 	public void close() {
 		try {
 		  socket.close();
-		  System.out.println("Client closed");
+		  System.out.println("Client closed "+clientInfo);
 		}
 		catch(IOException ex) {
 			ex.printStackTrace();
@@ -60,6 +65,11 @@ public class NativeTcpClient implements Client {
 	@Override
 	public boolean isClosed() {
 		return socket.isClosed();
+	}
+
+	@Override
+	public ClientInfo getClientInfo() {
+		return clientInfo;
 	}
 
 }

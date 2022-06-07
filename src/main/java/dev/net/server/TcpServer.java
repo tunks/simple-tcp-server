@@ -62,7 +62,7 @@ public abstract class TcpServer implements Server {
             {
                 Thread t = Executors.defaultThreadFactory().newThread(r);
                 t.setDaemon(true);
-                t.setName("HANDLER_" + instanceCount.getAndIncrement());
+                t.setName("Connection::Handler_" + instanceCount.getAndIncrement());
                 return t;
             }
         });     

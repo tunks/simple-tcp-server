@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MultiClientApp {
-    private static ExecutorService executor = Executors.newFixedThreadPool(20);
+    private static ExecutorService executor = Executors.newFixedThreadPool(50);
     private static AtomicInteger clientCounter = new AtomicInteger(1);
     public static void main(String argv[]) throws Exception {
         try{

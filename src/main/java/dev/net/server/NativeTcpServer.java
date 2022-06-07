@@ -3,6 +3,8 @@ package dev.net.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import dev.net.client.Client;
 import dev.net.client.ClientRequestHandler;
 import dev.net.client.TcpClientHandler;
@@ -16,7 +18,7 @@ public class NativeTcpServer extends TcpServer {
 	private ServerSocket server;
 	private boolean started = false;
 	private Thread serverThread;
-	
+	private AtomicInteger clientCounter = new AtomicInteger();
 	public NativeTcpServer(int port) {
 		super(port);
 	}
@@ -34,11 +36,13 @@ public class NativeTcpServer extends TcpServer {
 			try {
 				System.out.println("Started server on port: "+getPort());
 				started = true;
-				server = new ServerSocket(getPort());
+				server = new ServerSocket();//getPort());
 				server.setReuseAddress(true);
+				server.bind(new java.net.InetSocketAddress(getPort()));
 				while (started) {
 					Socket clientSocket = server.accept();
-					Client client = new NativeTcpClient(clientSocket, requestHandler);
+					String clientId = "Client::connection_"+clientCounter.incrementAndGet();
+					Client client = new NativeTcpClient(clientId, clientSocket, requestHandler);
 					TcpClientHandler clientHandler = factory.createClientHandler(client);
 					addHandler(clientHandler);
 				}
@@ -58,6 +62,7 @@ public class NativeTcpServer extends TcpServer {
 				started = false;
 				getClientHandlers().stream().forEach(client->client.getClient().close());
 				server.close();
+				System.out.println("TcpServer closed");
 			}
 		} catch (IOException ex) {
 			ex.printStackTrace();

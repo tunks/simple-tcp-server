@@ -16,6 +16,7 @@ public class TcpClientHandler implements ClientHandler, Runnable {
 
 	public void run() {
 		try {
+		  System.out.println("Start tcp client handler: "+client.getClientInfo());
 		  while(!client.isClosed()) {
 		      client.read();
 		  }
